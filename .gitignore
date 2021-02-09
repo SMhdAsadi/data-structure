@@ -1,2 +1,4 @@
 huffman_coding/
 .vscode
+**/main.*
+**/main

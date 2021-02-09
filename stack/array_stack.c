@@ -1,14 +1,12 @@
+#include "array_stack.h"
 #include <stdio.h>
-#include <stdlib.h>
-
-#define MAX_STACK_SIZE 10
+#include <malloc.h>
 
 struct stack
 {
     int array[MAX_STACK_SIZE];
     int top;
 };
-typedef struct stack Stack;
 
 Stack *newStack()
 {
@@ -30,54 +28,48 @@ int isStackFull(Stack *stack)
 
 int isStackEmpty(Stack *stack)
 {
-    return !getStackSize(stack);
+    return getStackSize(stack) == 0;
 }
 
-int push(Stack *stack, int value)
+int push(Stack *stack, int data)
 {
-    if (!isStackFull(stack))
-    {
-        stack->top++;
-        stack->array[stack->top] = value;
-        return 1;
-    } 
+    if (isStackFull(stack))
+        return -1;
     else
     {
-        return -1;
+        stack->top++;
+        stack->array[stack->top] = data;
+        return 1;
     }
 }
 
 int pop(Stack *stack)
 {
-    if (!isStackEmpty(stack))
-    {
-        return stack->array[stack->top--];
-    }
+    if (isStackEmpty(stack))
+        return -1;
     else
-    {
-        exit(1);
-    }
+        return stack->array[stack->top--];
 }
 
 int peek(Stack *stack)
 {
-    if(!isStackEmpty(stack))
-    {
-        return stack->array[stack->top];
-    }
+    if (isStackEmpty(stack))
+        return -1;
     else
-    {
-        exit(1);
-    }
+        return stack->array[stack->top];
 }
 
 void printStack(Stack *stack)
 {
-    for(int i = 0; i < getStackSize(stack) - 1; i++)
+    int size = getStackSize(stack);
+    if (size == 0)
+        printf("empty stack\n");
+    else
     {
-        printf("%d, ", stack->array[i]);
+        for (int i = 0; i < size - 1; i++)
+            printf("%d, ", stack->array[i]);
+        printf("%d <- Top\n", stack->array[stack->top]);
     }
-    printf("%d <- Top\n", stack->array[stack->top]);
 }
 
 void deleteStack(Stack *stack)
