@@ -1,14 +1,11 @@
+#include "list_deque.h"
 #include <stdio.h>
 #include <malloc.h>
 
-#include "../linkedlist/linkedlist.c"
-
-
-typedef struct _deque
+struct deque
 {
     LinkedList *list;
-} Deque;
-
+};
 
 Deque *newDeque()
 {
@@ -36,46 +33,40 @@ void insertLast(Deque *deque, int data)
 int deleteFirst(Deque *deque)
 {
     if (isDequeEmpty(deque))
-    {
         return -1;
-    }
+
     int data = getFirstListData(deque->list);
     if (deleteFromFirstOfList(deque->list) == -1)
-    {
         return -1;
-    }
+
     return data;
 }
 
 int deleteLast(Deque *deque)
 {
     if (isDequeEmpty(deque))
-    {
         return -1;
-    }
+
     int data = getLastListData(deque->list);
     if (deleteFromLastOfList(deque->list) == -1)
-    {
         return -1;
-    }
+
     return data;
 }
 
 int peekfirst(Deque *deque)
 {
     if (isDequeEmpty(deque))
-    {
         return -1;
-    }
+
     return getFirstListData(deque->list);
 }
 
 int peekLast(Deque *deque)
 {
     if (isDequeEmpty(deque))
-    {
         return -1;
-    }
+
     return getLastListData(deque->list);
 }
 
