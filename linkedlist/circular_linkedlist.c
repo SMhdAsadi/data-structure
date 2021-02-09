@@ -1,3 +1,4 @@
+#include "circular_linkedlist.h"
 #include <stdio.h>
 #include <malloc.h>
 
@@ -7,10 +8,10 @@ typedef struct listnode
     struct listnode *next;
 } CListNode;
 
-typedef struct _circular_linkedlist
+struct _circular_linkedlist
 {
     CListNode *head;
-} CLinkedList;
+};
 
 CLinkedList *newCLinkedList()
 {
@@ -34,18 +35,31 @@ int isCListEmpty(CLinkedList *list)
     return list->head == NULL;
 }
 
+int getCListSize(CLinkedList *list)
+{
+    if (isCListEmpty(list))
+        return 0;
+
+    CListNode *node = list->head;
+    int size = 0;
+    while (node != NULL)
+    {
+        node = node->next;
+        size++;
+    }
+
+    return size;
+}
+
 CListNode *getLastCListNode(CLinkedList *list)
 {
     if (isCListEmpty(list))
-    {
         return NULL;
-    }
+
     CListNode *currentNode = list->head;
 
     while (currentNode->next != list->head)
-    {
         currentNode = currentNode->next;
-    }
 
     return currentNode;
 }
@@ -53,38 +67,54 @@ CListNode *getLastCListNode(CLinkedList *list)
 CListNode *getSecondLastCListNode(CLinkedList *list)
 {
     if (isCListEmpty(list) || list->head == list->head->next)
-    {
         return NULL;
-    }
 
     CListNode *currentNode = list->head;
 
     while (currentNode->next->next != list->head)
-    {
         currentNode = currentNode->next;
-    }
 
     return currentNode;
 }
 
-int getFirstListData(CLinkedList *list)
+int getFirstCListData(CLinkedList *list)
 {
     if (isCListEmpty(list))
-    {
         return -1;
-    }
 
     return list->head->data;
 }
 
-int getLastListData(CLinkedList *list)
+int getLastCListData(CLinkedList *list)
 {
     if (isCListEmpty(list))
-    {
         return -1;
-    }
 
     return getLastCListNode(list)->data;
+}
+
+int getCListData(CLinkedList *list, int index)
+{
+    if (index == 0)
+        return getFirstCListData(list);
+
+    if (index < 0 || isCListEmpty(list))
+        return -1;
+
+    CListNode *currentNode = list->head;
+    int i = 0;
+    while (i < index)
+    {
+        currentNode = currentNode->next;
+        i++;
+        if (currentNode == list->head)
+            return -1;
+    }
+
+    if (i == index)
+        return currentNode->data;
+
+    return -1;
 }
 
 void addToFirstOfCList(CLinkedList *list, int data)
@@ -96,9 +126,10 @@ void addToFirstOfCList(CLinkedList *list, int data)
         return;
     }
 
+    CListNode *lastNode = getLastCListNode(list);
     node->next = list->head;
     list->head = node;
-    getLastCListNode(list)->next = node;
+    lastNode->next = node;
 }
 
 void addToLastOfCList(CLinkedList *list, int data)
@@ -114,12 +145,48 @@ void addToLastOfCList(CLinkedList *list, int data)
     node->next = list->head;
 }
 
+int addToCList(CLinkedList *list, int index, int data)
+{
+    if (index == 0)
+    {
+        addToFirstOfCList(list, data);
+        return 1;
+    }
+
+    if (index < 0 || isCListEmpty(list))
+        return -1;
+
+    CListNode *beforeNode = list->head;
+    int i = 1;
+    while (i < index)
+    {
+        beforeNode = beforeNode->next;
+        i++;
+        if (beforeNode == list->head)
+            return -1;
+    }
+
+    if (i == index)
+    {
+        if (beforeNode->next == list->head)
+        {
+            addToLastOfCList(list, data);
+            return 1;
+        }
+
+        CListNode *newNode = newCListNode(data);
+        newNode->next = beforeNode->next;
+        beforeNode->next = newNode;
+        return 1;
+    }
+
+    return -1;
+}
+
 int deleteFromFirstOfCList(CLinkedList *list)
 {
     if (isCListEmpty(list))
-    {
         return -1;
-    }
 
     if (list->head->next == list->head)
     {
@@ -133,16 +200,14 @@ int deleteFromFirstOfCList(CLinkedList *list)
     lastNode->next = list->head;
     deletedNode->next = NULL;
     free(deletedNode);
-    
+
     return 1;
 }
 
 int deleteFromLastOfCList(CLinkedList *list)
 {
     if (isCListEmpty(list))
-    {
         return -1;
-    }
 
     if (list->head->next == list->head)
     {
@@ -160,6 +225,38 @@ int deleteFromLastOfCList(CLinkedList *list)
     free(lastNode);
 }
 
+int deleteFromCList(CLinkedList *list, int index)
+{
+    if (index == 0)
+        return deleteFromFirstOfCList(list);
+
+    if (index < 0 || isCListEmpty(list))
+        return -1;
+
+    CListNode *beforeNode = list->head;
+    int i = 1;
+    while (i < index)
+    {
+        beforeNode = beforeNode->next;
+        i++;
+        if (beforeNode == list->head)
+            return -1;
+    }
+
+    if (i == index)
+    {
+        if (beforeNode->next == list->head)
+            return deleteFromLastOfCList(list);
+
+        CListNode *deletedNode = beforeNode->next;
+        beforeNode->next = deletedNode->next;
+        free(deletedNode);
+        return 1;
+    }
+
+    return -1;
+}
+
 void deleteCListNodes(CListNode *node)
 {
     if (node != NULL)
@@ -174,9 +271,8 @@ void deleteCList(CLinkedList *list)
     if (list != NULL)
     {
         if (!isCListEmpty(list))
-        {
-            getLastCListNode(list)->next = NULL;   
-        }
+            getLastCListNode(list)->next = NULL;
+
         deleteCListNodes(list->head);
         free(list);
     }
