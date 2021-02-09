@@ -1,11 +1,11 @@
 #include "list_stack.h"
 #include <stdio.h>
+#include <malloc.h>
 
 struct stack
 {
     LinkedList *list;
 };
-typedef struct stack Stack;
 
 Stack *newStack()
 {
@@ -32,9 +32,8 @@ void push(Stack *stack, int data)
 int pop(Stack *stack)
 {
     if (isStackEmpty(stack))
-    {
         return -1;
-    }
+
     int data = getFirstListData(stack->list);
     deleteFromFirstOfList(stack->list);
     return data;
@@ -43,22 +42,27 @@ int pop(Stack *stack)
 int peek(Stack *stack)
 {
     if (isStackEmpty(stack))
-    {
         return -1;
-    }
+
     return getFirstListData(stack->list);
 }
 
 void printStack(Stack *stack)
 {
     printf("Top -> ");
-    ListNode *node = stack->list->head;
-    while (node->next != NULL)
+    if (isStackEmpty(stack))
+        printf("empty\n");
+    else
     {
-        printf("%d -> ", node->data);
-        node = node->next;
+        ListNode *node = stack->list->head;
+        while (node->next != NULL)
+        {
+            printf("%d -> ", node->data);
+            node = node->next;
+        }
+
+        printf("%d\n", node->data);
     }
-    printf("%d\n", node->data);
 }
 
 void deleteStack(Stack *stack)
