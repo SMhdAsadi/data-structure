@@ -1,7 +1,7 @@
-#ifndef LIST_DEQUE_H
-#define LIST_DEQUE_H
+#ifndef ARRAY_DEQUE_H
+#define ARRAY_DEQUE_H
 
-#include "../linkedlist/linkedlist.h"
+#define MAX_QUEUE_SIZE 10
 
 struct deque;
 typedef struct deque Deque;
@@ -12,11 +12,17 @@ Deque *newDeque();
 // checks whether deque is empty or not
 int isDequeEmpty(Deque *deque);
 
-// inserts data to beginning of the deque
-void insertFirst(Deque *deque, int data);
+/*
+    inserts data to beginning of the deque
+    returns -1 if deque is full
+*/
+int insertFirst(Deque *deque, int data);
 
-// inserts data to end of the deque
-void insertLast(Deque *deque, int data);
+/*
+    inserts data to end of the deque
+    returns -1 if deque is full
+*/
+int insertLast(Deque *deque, int data);
 
 /*
     deletes first item of deque

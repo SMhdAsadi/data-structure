@@ -54,7 +54,7 @@ int deleteLast(Deque *deque)
     return data;
 }
 
-int peekfirst(Deque *deque)
+int peekFirst(Deque *deque)
 {
     if (isDequeEmpty(deque))
         return -1;
@@ -70,7 +70,7 @@ int peekLast(Deque *deque)
     return getLastListData(deque->list);
 }
 
-int deleteDeque(Deque *deque)
+void deleteDeque(Deque *deque)
 {
     if (deque != NULL)
     {
