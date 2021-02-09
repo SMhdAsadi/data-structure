@@ -1,13 +1,11 @@
+#include "list_queue.h"
 #include <stdio.h>
-#include "../linkedlist/linkedlist.c"
+#include <malloc.h>
 
-#define MAX_QUEUE_SIZE 10
-
-typedef struct list_queue
+struct list_queue
 {
     LinkedList *list;
-} Queue;
-
+};
 
 Queue *newQueue()
 {
@@ -37,11 +35,8 @@ int peek(Queue *queue)
 
 void deleteQueue(Queue *queue)
 {
-    if (queue != NULL)
-    {
-        deleteList(queue->list);
-        free(queue);
-    }
+    deleteList(queue->list);
+    free(queue);
 }
 
 void printQueue(Queue *queue)

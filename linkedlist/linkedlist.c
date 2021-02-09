@@ -14,7 +14,6 @@ struct linkedlist
     ListNode *head;
 };
 
-
 LinkedList *newLinkedList()
 {
     LinkedList *linkedList = malloc(sizeof(LinkedList));
@@ -41,7 +40,7 @@ int getListSize(LinkedList *list)
 {
     if (isListEmpty(list))
         return 0;
-    
+
     int size = 1;
     ListNode *node = list->head;
     while (node->next != NULL)
@@ -60,7 +59,7 @@ ListNode *getLastListNode(LinkedList *list)
     ListNode *node = list->head;
     while (node->next != NULL)
         node = node->next;
-    
+
     return node;
 }
 
@@ -68,7 +67,7 @@ ListNode *getSecondLastListNode(LinkedList *list)
 {
     if (isListEmpty(list) || list->head->next == NULL)
         return NULL;
-    
+
     ListNode *node = list->head;
     while (node->next->next != NULL)
         node = node->next;
@@ -121,7 +120,7 @@ void addToFirstOfList(LinkedList *list, int data)
     {
         node->next = list->head;
         list->head = node;
-    }    
+    }
 }
 
 void addToLastOfList(LinkedList *list, int data)
@@ -229,11 +228,16 @@ void deleteList(LinkedList *list)
 void printList(LinkedList *list)
 {
     printf("[");
-    ListNode *currentNode = list->head;
-    while (currentNode->next != NULL)
+    if (isListEmpty(list))
+        printf(" ]\n");
+    else
     {
-        printf("%d, ", currentNode->data);
-        currentNode = currentNode->next;
+        ListNode *currentNode = list->head;
+        while (currentNode->next != NULL)
+        {
+            printf("%d, ", currentNode->data);
+            currentNode = currentNode->next;
+        }
+        printf("%d]\n", currentNode->data);
     }
-    printf("%d]\n", currentNode->data);
 }
