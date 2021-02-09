@@ -10,17 +10,15 @@
       so both front and rear come back to -1
 */
 
+#include "array_circular_queue.h"
 #include <stdio.h>
-#include <stdlib.h>
-
-#define MAX_QUEUE_SIZE 10
+#include <malloc.h>
 
 struct c_queue
 {
     int array[MAX_QUEUE_SIZE];
     int front, rear;
 };
-typedef struct c_queue CircularQueue;
 
 CircularQueue *newCircularQueue()
 {
@@ -30,26 +28,23 @@ CircularQueue *newCircularQueue()
     return queue;
 }
 
-int isQueueEmpty(CircularQueue *queue)
+int isCQueueEmpty(CircularQueue *queue)
 {
     return queue->front == -1;
 }
 
-int isQueueFull(CircularQueue *queue)
+int isCQueueFull(CircularQueue *queue)
 {
     return (queue->rear + 1) % MAX_QUEUE_SIZE == queue->front;
 }
 
 int enqueue(CircularQueue *queue, int data)
 {
-    if (isQueueFull(queue))
-    {
+    if (isCQueueFull(queue))
         return -1;
-    }
+
     if (queue->front == -1)
-    {
         queue->front = 0;
-    }
 
     queue->rear = (queue->rear + 1) % MAX_QUEUE_SIZE;
     queue->array[queue->rear] = data;
@@ -58,49 +53,42 @@ int enqueue(CircularQueue *queue, int data)
 
 int dequeue(CircularQueue *queue)
 {
-    if (isQueueEmpty(queue))
-    {
+    if (isCQueueEmpty(queue))
         return -1;
-    }
 
     int data = queue->array[queue->front];
     if (queue->front == queue->rear)
-    {
         queue->front = queue->rear = -1;
-    }
     else
-    {
-        queue->front = (queue->front + 1) % MAX_QUEUE_SIZE;   
-    }
+        queue->front = (queue->front + 1) % MAX_QUEUE_SIZE;
+
     return data;
 }
 
 int peek(CircularQueue *queue)
 {
-    if (isQueueEmpty(queue))
-    {
+    if (isCQueueEmpty(queue))
         return -1;
-    }
+
     return queue->array[queue->front];
 }
 
-void printQueue(CircularQueue *queue)
+void printCQueue(CircularQueue *queue)
 {
     printf("Front -> ");
-    
-    if (!isQueueEmpty(queue))
+
+    if (!isCQueueEmpty(queue))
     {
         for (int i = queue->front; i != queue->rear; i = (i + 1) % MAX_QUEUE_SIZE)
-        {
             printf("%d ", queue->array[i]);
-        }
+
         printf("%d ", queue->array[queue->rear]);
     }
-    
+
     printf("<- Rear\n");
 }
 
-void deleteQueue(CircularQueue *queue)
+void deleteCQueue(CircularQueue *queue)
 {
     free(queue);
 }
