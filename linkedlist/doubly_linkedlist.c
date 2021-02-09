@@ -1,3 +1,4 @@
+#include "doubly_linkedlist.h"
 #include <stdio.h>
 #include <malloc.h>
 
@@ -8,11 +9,10 @@ typedef struct list_node
     struct list_node *next;
 } DListNode;
 
-typedef struct DLinkedList
+struct dlinkedlist
 {
     DListNode *head;
-} DLinkedList;
-
+};
 
 DListNode *newDListNode(int data)
 {
@@ -37,18 +37,31 @@ int isDListEmpty(DLinkedList *list)
     return list->head == NULL;
 }
 
+int getDListSize(DLinkedList *list)
+{
+    if (isDListEmpty(list))
+        return -1;
+
+    int size = 0;
+    DListNode *currentNode = list->head;
+    while (currentNode != NULL)
+    {
+        size++;
+        currentNode = currentNode->next;
+    }
+
+    return size;
+}
+
 DListNode *getLastDNode(DLinkedList *list)
 {
     if (isDListEmpty(list))
-    {
         return NULL;
-    }
 
     DListNode *node = list->head;
     while (node->next != NULL)
-    {
         node = node->next;
-    }
+
     return node;
 }
 
@@ -80,12 +93,43 @@ void addToLastOfDList(DLinkedList *list, int data)
     newNode->prev = lastNode;
 }
 
+int addToDList(DLinkedList *list, int index, int data)
+{
+    if (index == 0)
+    {
+        addToFirstOfDList(list, data);
+        return 1;
+    }
+
+    if (isDListEmpty(list) || index < 0)
+        return -1;
+
+    DListNode *beforeNode = list->head;
+    int i = 1;
+    while (beforeNode != NULL && i < index)
+    {
+        beforeNode = beforeNode->next;
+        i++;
+    }
+
+    if (index == i)
+    {
+        DListNode *newNode = newDListNode(data);
+        newNode->next = beforeNode->next;
+        newNode->prev = beforeNode;
+        if (beforeNode->next != NULL)
+            beforeNode->next->prev = newNode;
+        beforeNode->next = newNode;
+        return 1;
+    }
+
+    return -1;
+}
+
 int deleteFromFirstOfDList(DLinkedList *list)
 {
     if (isDListEmpty(list))
-    {
         return 0;
-    }
 
     DListNode *firstNode = list->head;
     list->head = firstNode->next;
@@ -97,9 +141,7 @@ int deleteFromFirstOfDList(DLinkedList *list)
 int deleteFromLastOfDList(DLinkedList *list)
 {
     if (isDListEmpty(list))
-    {
         return -1;
-    }
 
     DListNode *lastNode = getLastDNode(list);
     if (lastNode->prev == NULL) // There is just one node
@@ -115,12 +157,39 @@ int deleteFromLastOfDList(DLinkedList *list)
     return 1;
 }
 
+int deleteFromDList(DLinkedList *list, int index)
+{
+    if (index == 0)
+        return deleteFromFirstOfDList(list);
+
+    if (index < 0 || isDListEmpty(list))
+        return -1;
+
+    DListNode *beforeNode = list->head;
+    int i = 1;
+    while (beforeNode != NULL && i < index)
+    {
+        beforeNode = beforeNode->next;
+        i++;
+    }
+
+    if (i == index)
+    {
+        DListNode *deletedNode = beforeNode->next;
+        if (deletedNode->next != NULL)
+            deletedNode->next->prev = beforeNode;
+        beforeNode->next = deletedNode->next;
+        free(deletedNode);
+        return 1;
+    }
+
+    return -1;
+}
+
 int getFirstDListData(DLinkedList *list)
 {
     if (isDListEmpty(list))
-    {
         return -1;
-    }
 
     return list->head->data;
 }
@@ -128,11 +197,31 @@ int getFirstDListData(DLinkedList *list)
 int getLastDListData(DLinkedList *list)
 {
     if (isDListEmpty(list))
-    {
         return -1;
-    }
 
     return getLastDNode(list)->data;
+}
+
+int getDListData(DLinkedList *list, int index)
+{
+    if (index == 0)
+        return getFirstDListData(list);
+
+    if (index < 0 || isDListEmpty(list))
+        return -1;
+
+    DListNode *currentNode = list->head;
+    int i = 0;
+    while (currentNode != NULL && i < index)
+    {
+        currentNode = currentNode->next;
+        i++;
+    }
+
+    if (i == index && currentNode != NULL)
+        return currentNode->data;
+
+    return -1;
 }
 
 void deleteNodes(DListNode *node)
@@ -160,15 +249,11 @@ void printDList(DLinkedList *list)
         printf("%i, ", node->data);
         node = node->next;
     }
+
     if (!isDListEmpty(list))
-    {
         printf("%i]\n", node->data);
-    }
     else
-    {
         printf("]\n");
-    }
-    
 }
 
 void printDListReverse(DLinkedList *list)
@@ -181,12 +266,9 @@ void printDListReverse(DLinkedList *list)
         printf("%i, ", node->data);
         node = node->prev;
     }
+
     if (!isDListEmpty(list))
-    {
         printf("%i]\n", node->data);
-    }
     else
-    {
         printf("]\n");
-    }
 }
