@@ -1,17 +1,13 @@
+#include "heap.h"
+#include "dynamic_array.h"
 #include <stdio.h>
 #include <malloc.h>
-#include "dynamic_array.h"
 
-#define DEFAULT_HEAP_SIZE 10
-
-typedef enum _heap_type {MIN_HEAP, MAX_HEAP} HeapType;
-
-typedef struct _heap
+struct heap
 {
     Array *array;
     HeapType type;
-} Heap;
-
+};
 
 Heap *newHeap(HeapType type)
 {
@@ -26,68 +22,65 @@ void heapify(Heap *heap, int index)
 {
     int size = len(heap->array);
 
-    int left = 2 * index + 1;
-    int right = 2 * index + 2;
-    
-    int extremum_index = index;
-    if (left < size && (
-                        heap->type == MAX_HEAP && get(heap->array, left) > get(heap->array, extremum_index) ||
-                        heap->type == MIN_HEAP && get(heap->array, left) < get(heap->array, extremum_index)
-                        )
-        )
+    int leftIndex = 2 * index + 1;
+    int rightIndex = 2 * index + 2;
+
+    int extermum_index = index;
+    if (leftIndex < size)
     {
-        extremum_index = left;
-    }
-    if (right < size && (
-                        heap->type == MAX_HEAP && get(heap->array, right) > get(heap->array, extremum_index) ||
-                        heap->type == MIN_HEAP && get(heap->array, right) < get(heap->array, extremum_index)
-                        )
-        )
-    {
-        extremum_index = right;
+        int leftChildData = get(heap->array, leftIndex);
+
+        if (heap->type == MAX_HEAP)
+        {
+            if (leftChildData > get(heap->array, extermum_index))
+                extermum_index = leftIndex;
+        }
+        else if (leftChildData < get(heap->array, extermum_index))
+            extermum_index = leftIndex;
     }
 
-    if (extremum_index != index)
+    if (rightIndex < size)
     {
-        swap(heap->array, extremum_index, index);
-        heapify(heap, extremum_index);
+        int rightChildData = get(heap->array, rightIndex);
+
+        if (heap->type == MAX_HEAP)
+        {
+            if (rightChildData > get(heap->array, extermum_index))
+                extermum_index = rightIndex;
+        }
+        else if (rightChildData < get(heap->array, extermum_index))
+            extermum_index = rightIndex;
+    }
+
+    if (extermum_index != index)
+    {
+        swap(heap->array, extermum_index, index);
+        heapify(heap, extermum_index);
     }
 }
 
 void insert(Heap *heap, int data)
 {
-    add(heap->array, data);
+    addLast(heap->array, data);
 
-    for (int i = len(heap->array); i >= 0; i--)
-    {
+    for (int i = len(heap->array) - 1; i >= 0; i--)
         heapify(heap, i);
-    }
 }
 
-void deleteRoot(Heap *heap, int data)
+int deleteRoot(Heap *heap)
 {
     int size = len(heap->array);
-    int index;
-    for (index = 0; index < size; index++)
-    {
-        if (get(heap->array, index) == data)
-        {
-            break;
-        }
-    }
+    if (size == 0)
+        return -1;
 
-    if (index == size)
-    {
-        return;
-    }
-
-    swap(heap->array, index, size - 1);
+    int value = get(heap->array, 0);
+    swap(heap->array, 0, size - 1);
     deleteLast(heap->array);
 
     for (int i = size / 2 - 1; i >= 0; i--)
-    {
         heapify(heap, i);
-    }
+
+    return value;
 }
 
 void printHeap(Heap *heap)
@@ -95,18 +88,12 @@ void printHeap(Heap *heap)
     int size = len(heap->array);
     printf("Heap [");
     for (int i = 0; i < size - 1; i++)
-    {
         printf("%i, ", get(heap->array, i));
-    }
 
     if (size != 0)
-    {
         printf("%i]\n", get(heap->array, size - 1));
-    }
     else
-    {
         printf("]\n");
-    }   
 }
 
 void deleteHeap(Heap *heap)
