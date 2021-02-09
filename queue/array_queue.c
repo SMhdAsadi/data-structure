@@ -9,17 +9,15 @@
       so both front and rear come back to -1
 */
 
+#include "array_queue.h"
 #include <stdio.h>
-#include <stdlib.h>
-
-#define MAX_QUEUE_SIZE 10
+#include <malloc.h>
 
 struct queue
 {
     int array[MAX_QUEUE_SIZE];
     int front, rear;
 };
-typedef struct queue Queue;
 
 Queue *newQueue()
 {
@@ -43,13 +41,11 @@ int isQueueFull(Queue *queue)
 int enqueue(Queue *queue, int data)
 {
     if (isQueueFull(queue))
-    {
         return -1;
-    }
+
     if (queue->front == -1)
-    {
         queue->front++;
-    }
+
     queue->rear++;
     queue->array[queue->rear] = data;
     return 1;
@@ -58,34 +54,33 @@ int enqueue(Queue *queue, int data)
 int dequeue(Queue *queue)
 {
     if (isQueueEmpty(queue))
-    {
         return -1;
-    }
+
     int data = queue->array[queue->front];
     queue->front++;
     if (queue->front > queue->rear)
-    {
         queue->front = queue->rear = -1;
-    }
+
     return data;
 }
 
 int peek(Queue *queue)
 {
     if (isQueueEmpty(queue))
-    {
         return -1;
-    }
+
     return queue->array[queue->front];
 }
 
 void printQueue(Queue *queue)
 {
     printf("Front -> ");
-    for (int i = queue->front; i <= queue->rear; i++)
-    {
-        printf("%d ", queue->array[i]);
-    }
+    if (queue->front == -1)
+        printf(" ");
+    else
+        for (int i = queue->front; i <= queue->rear; i++)
+            printf("%d ", queue->array[i]);
+
     printf("<- Rear\n");
 }
 
