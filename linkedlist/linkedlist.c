@@ -1,5 +1,6 @@
+#include "linkedlist.h"
 #include <stdio.h>
-#include <stdlib.h>
+#include <malloc.h>
 
 struct listNode
 {
@@ -12,7 +13,6 @@ struct linkedlist
 {
     ListNode *head;
 };
-typedef struct linkedlist LinkedList;
 
 
 LinkedList *newLinkedList()
@@ -40,9 +40,7 @@ int isListEmpty(LinkedList *list)
 int getListSize(LinkedList *list)
 {
     if (isListEmpty(list))
-    {
         return 0;
-    }
     
     int size = 1;
     ListNode *node = list->head;
@@ -57,15 +55,11 @@ int getListSize(LinkedList *list)
 ListNode *getLastListNode(LinkedList *list)
 {
     if (isListEmpty(list))
-    {
         return NULL;
-    }
 
     ListNode *node = list->head;
     while (node->next != NULL)
-    {
         node = node->next;
-    }
     
     return node;
 }
@@ -73,24 +67,19 @@ ListNode *getLastListNode(LinkedList *list)
 ListNode *getSecondLastListNode(LinkedList *list)
 {
     if (isListEmpty(list) || list->head->next == NULL)
-    {
         return NULL;
-    }
     
     ListNode *node = list->head;
     while (node->next->next != NULL)
-    {
         node = node->next;
-    }
+
     return node;
 }
 
 int getListData(LinkedList *list, int index)
 {
     if (isListEmpty(list))
-    {
         return -1;
-    }
 
     int currentIndex = 0;
     ListNode *currentNode = list->head;
@@ -102,27 +91,24 @@ int getListData(LinkedList *list, int index)
     }
 
     if (currentIndex == index)
-    {
         return currentNode->data;
-    }
+
     return -1;
 }
 
 int getFirstListData(LinkedList *list)
 {
     if (isListEmpty(list))
-    {
         return -1;
-    }
+
     return list->head->data;
 }
 
 int getLastListData(LinkedList *list)
 {
     if (isListEmpty(list))
-    {
         return -1;
-    }
+
     return getLastListNode(list)->data;
 }
 
@@ -130,9 +116,7 @@ void addToFirstOfList(LinkedList *list, int data)
 {
     ListNode *node = newListNode(data);
     if (isListEmpty(list))
-    {
         list->head = node;
-    }
     else
     {
         node->next = list->head;
@@ -144,9 +128,7 @@ void addToLastOfList(LinkedList *list, int data)
 {
     ListNode *node = newListNode(data);
     if (isListEmpty(list))
-    {
         list->head = node;
-    }
     else
     {
         ListNode *lastNode = getLastListNode(list);
@@ -164,16 +146,13 @@ int addToList(LinkedList *list, int index, int data)
 
     ListNode *currentNode = list->head;
     if (currentNode == NULL)
-    {
         return -1;
-    }
+
     for (int i = 0; i < index - 1; i++)
     {
         currentNode = currentNode->next;
         if (currentNode == NULL)
-        {
             return -1;
-        }
     }
 
     ListNode *newNode = newListNode(data);
@@ -185,9 +164,7 @@ int addToList(LinkedList *list, int index, int data)
 int deleteFromFirstOfList(LinkedList *list)
 {
     if (isListEmpty(list))
-    {
         return -1;
-    }
 
     ListNode *deletedNode = list->head;
     list->head = list->head->next;
@@ -198,9 +175,7 @@ int deleteFromFirstOfList(LinkedList *list)
 int deleteFromLastOfList(LinkedList *list)
 {
     if (isListEmpty(list))
-    {
         return -1;
-    }
 
     ListNode *secondLastNode = getSecondLastListNode(list);
     ListNode *lastNode = secondLastNode->next;
@@ -211,29 +186,22 @@ int deleteFromLastOfList(LinkedList *list)
 int deleteFromList(LinkedList *list, int index)
 {
     if (index == 0)
-    {
         return deleteFromFirstOfList(list);
-    }
 
     if (isListEmpty(list))
-    {
         return -1;
-    }
 
     ListNode *currentNode = list->head;
     for (int i = 0; i < index - 1; i++)
     {
         currentNode = currentNode->next;
         if (currentNode == NULL)
-        {
             return -1;
-        }
     }
 
     if (currentNode->next == NULL)
-    {
         return -1;
-    }
+
     ListNode *deletedNode = currentNode->next;
     currentNode->next = currentNode->next->next;
     free(deletedNode);
