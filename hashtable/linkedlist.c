@@ -1,19 +1,19 @@
+#include "linkedlist.h"
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
 
-typedef struct _node
+typedef struct node
 {
     char *key;
     int value;
-    struct _node *next;
+    struct node *next;
 } Node;
 
-typedef struct _list
+struct list
 {
     Node *head;
-} List;
-
+};
 
 Node *newNode(char *key, int value)
 {
@@ -43,9 +43,7 @@ void addNode(List *list, char *key, int value)
     Node *node = newNode(key, value);
 
     if (isEmpty(list))
-    {
         list->head = node;
-    }
     else
     {
         node->next = list->head;
@@ -53,17 +51,33 @@ void addNode(List *list, char *key, int value)
     }
 }
 
+int getListValue(List *list, char *key)
+{
+    if (isEmpty(list))
+        return -1;
+
+    Node *currentNode = list->head;
+
+    while (currentNode != NULL)
+    {
+        if (strcmp(currentNode->key, key) == 0)
+            return currentNode->value;
+
+        currentNode = currentNode->next;
+    }
+
+    return -1;
+}
+
 int deleteNode(List *list, char *key)
 {
     if (isEmpty(list))
-    {
-        return 0;
-    }
+        return -1;
 
-    Node *node = list->head;
+    Node *currentNode = list->head;
 
     // if it is first item
-    if (list->head->key == key)
+    if (strcmp(list->head->key, key) == 0)
     {
         Node *firstNode = list->head;
         list->head = firstNode->next;
@@ -72,19 +86,19 @@ int deleteNode(List *list, char *key)
     }
 
     // if it is not first item
-    while(node->next != NULL)
+    while (currentNode->next != NULL)
     {
-        if (strcmp(node->next->key, key) == 0)
+        if (strcmp(currentNode->next->key, key) == 0)
         {
-            Node *deletedNode = node->next;
-            node->next = deletedNode->next;
+            Node *deletedNode = currentNode->next;
+            currentNode->next = deletedNode->next;
             free(deletedNode);
-            return 1;            
+            return 1;
         }
-        node = node->next;
+        currentNode = currentNode->next;
     }
 
-    return 0;
+    return -1;
 }
 
 void deleteNodes(Node *node)
@@ -108,7 +122,9 @@ void printList(List *list)
 
     Node *node = list->head;
 
-    if (!isEmpty(list))
+    if (isEmpty(list))
+        printf(" ]\n");
+    else
     {
         while (node->next != NULL)
         {
@@ -116,9 +132,5 @@ void printList(List *list)
             node = node->next;
         }
         printf("(%s, %i)]\n", node->key, node->value);
-    }
-    else
-    {
-        printf(" ]\n");
     }
 }

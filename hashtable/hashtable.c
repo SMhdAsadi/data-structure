@@ -3,26 +3,21 @@
     when a overlap is happened, linkedlist is used
 */
 
+#include "hashtable.h"
 #include <stdio.h>
 #include <string.h>
 #include <malloc.h>
-#include "linkedlist.h"
 
-#define HASH_ARRAY_SIZE 5
-
-typedef struct _hashtable
+struct hashtable
 {
-    List *array[HASH_ARRAY_SIZE];
+    List **array;
     int size;
-} HashTable;
-
+};
 
 int hashFunction(char *key)
 {
     if (strlen(key) == 0)
-    {
         return -1;
-    }
 
     return *key % HASH_ARRAY_SIZE;
 }
@@ -30,13 +25,19 @@ int hashFunction(char *key)
 HashTable *newHashTable()
 {
     HashTable *hashTable = malloc(sizeof(HashTable));
+    hashTable->array = calloc(HASH_ARRAY_SIZE, sizeof(hashTable->array[0]));
+
     for (int i = 0; i < HASH_ARRAY_SIZE; i++)
-    {
         hashTable->array[i] = newList();
-    }
+
     hashTable->size = 0;
 
     return hashTable;
+}
+
+int getSize(HashTable *hashTable)
+{
+    return hashTable->size;
 }
 
 void addItem(HashTable *hashTable, char *key, int value)
@@ -58,27 +59,15 @@ int deleteItem(HashTable *hashTabe, char *key)
 int getValue(HashTable *hashTable, char *key)
 {
     int index = hashFunction(key);
-    
+
     List *list = hashTable->array[index];
     if (isEmpty(list))
-    {
         return -1;
-    }
-    
-    Node *node = list->head;
-    while (node != NULL)
-    {
-        if (strcmp(node->key, key) == 0)
-        {
-            return node->value;
-        }
-        node = node->next;
-    }
 
-    return -1;
+    return getListValue(list, key);
 }
 
-void print(HashTable *hashTable)
+void printHashTable(HashTable *hashTable)
 {
     printf("Hash Table:\n");
     for (int i = 0; i < HASH_ARRAY_SIZE; i++)
@@ -91,9 +80,7 @@ void print(HashTable *hashTable)
 void deleteHashTable(HashTable *hashTable)
 {
     for (int i = 0; i < HASH_ARRAY_SIZE; i++)
-    {
         deleteList(hashTable->array[i]);
-    }
 
     free(hashTable);
 }
