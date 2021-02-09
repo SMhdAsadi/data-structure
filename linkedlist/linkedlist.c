@@ -2,18 +2,6 @@
 #include <stdio.h>
 #include <malloc.h>
 
-struct listNode
-{
-    int data;
-    struct listNode *next;
-};
-typedef struct listNode ListNode;
-
-struct linkedlist
-{
-    ListNode *head;
-};
-
 LinkedList *newLinkedList()
 {
     LinkedList *linkedList = malloc(sizeof(LinkedList));

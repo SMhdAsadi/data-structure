@@ -1,7 +1,17 @@
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
 
-struct linkedlist;
+struct listNode
+{
+    int data;
+    struct listNode *next;
+};
+typedef struct listNode ListNode;
+
+struct linkedlist
+{
+    ListNode *head;
+};
 typedef struct linkedlist LinkedList;
 
 // creates and returns a new linked list
@@ -25,7 +35,7 @@ int getLastListData(LinkedList *list);
 // adds data to start of the list
 void addToFirstOfList(LinkedList *list, int data);
 
-// adds date to end of the list 
+// adds date to end of the list
 void addToLastOfList(LinkedList *list, int data);
 
 // adds data to the index positino in the list, returns -1 if index is invalid

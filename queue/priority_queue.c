@@ -1,10 +1,11 @@
+#include "priority_queue.h"
 #include <stdio.h>
-#include "../linkedlist/linkedlist.c"
+#include <malloc.h>
 
-typedef struct priority_queue
+struct priority_queue
 {
     LinkedList *list;
-} PriorityQueue;
+};
 
 PriorityQueue *newPriorityQueue()
 {
@@ -17,18 +18,15 @@ PriorityQueue *newPriorityQueue()
 int findEnqueueIndex(PriorityQueue *queue, int data)
 {
     if (isListEmpty(queue->list))
-    {
         return 0;
-    }
 
     ListNode *currentNode = queue->list->head;
     int i = 0;
     while (currentNode != NULL)
     {
         if (data > currentNode->data)
-        {
             return i;
-        }
+
         currentNode = currentNode->next;
         i++;
     }
