@@ -1,21 +1,19 @@
+#include "avl_tree.h"
 #include <stdio.h>
 #include <malloc.h>
 
-#define max(a, b) ((a > b) ? a : b)
-
-typedef struct _node
+typedef struct node
 {
     int data;
     int height;
-    struct _node *left;
-    struct _node *right;
+    struct node *left;
+    struct node *right;
 } Node;
 
-typedef struct _avl
+struct avl
 {
     Node *root;
-} AVL;
-
+};
 
 Node *newNode(int data)
 {
@@ -43,9 +41,8 @@ int isAVLEmpty(AVL *tree)
 int getHeight(Node *node)
 {
     if (node == NULL)
-    {
         return 0;
-    }
+
     return node->height;
 }
 
@@ -57,9 +54,8 @@ void updateHeight(Node *node)
 int getBalanceFactor(Node *node)
 {
     if (node == NULL)
-    {
         return 0;
-    }
+
     return getHeight(node->left) - getHeight(node->right);
 }
 
@@ -93,7 +89,6 @@ Node *leftRotation(Node *X)
     return Y;
 }
 
-
 /*
     rotate X with Y in this diagram
               X
@@ -118,9 +113,7 @@ Node *reBalance(Node *node)
 {
     // if it is LL
     if (isHeavyLeft(node) && getBalanceFactor(node->left) >= 0)
-    {
         return rightRotation(node);
-    }
 
     // if it is LR
     if (isHeavyLeft(node) && getBalanceFactor(node->left) < 0)
@@ -147,22 +140,14 @@ Node *reBalance(Node *node)
 Node *insert(Node *node, int data)
 {
     if (node == NULL)
-    {
         return newNode(data);
-    }
 
     if (data < node->data)
-    {
         node->left = insert(node->left, data);
-    }
-    else if(data > node->data)
-    {
+    else if (data > node->data)
         node->right = insert(node->right, data);
-    }
     else // key is in tree already
-    {
         return node;
-    }
 
     updateHeight(node);
     return reBalance(node);
@@ -177,34 +162,27 @@ Node *getLowestNode(Node *node)
 {
     Node *currentNode = node;
     while (currentNode != NULL && currentNode->left != NULL)
-    {
         currentNode = currentNode->left;
-    }
+
     return currentNode;
 }
 
-Node *delete(Node *node, int data)
+Node *deleteNode(Node *node, int data)
 {
     if (node == NULL)
-    {
         return node;
-    }
 
     if (data < node->data)
-    {
-        node->left = delete(node->left, data);
-    }
+        node->left = deleteNode(node->left, data);
     else if (data > node->data)
-    {
-        node->right = delete(node->right, data);
-    }
+        node->right = deleteNode(node->right, data);
     else
     {
         // if node has no children
         if (node->right == NULL && node->left == NULL)
         {
             free(node);
-            node = NULL;
+            return NULL;
         }
 
         // if node has just right child
@@ -226,12 +204,7 @@ Node *delete(Node *node, int data)
         // if node has both left and right child
         Node *LowestInRightSubTree = getLowestNode(node->right);
         node->data = LowestInRightSubTree->data;
-        node->right = delete(node->right, node->data);
-    }
-
-    if (node == NULL)
-    {
-        return node;
+        node->right = deleteNode(node->right, node->data);
     }
 
     updateHeight(node);
@@ -240,7 +213,7 @@ Node *delete(Node *node, int data)
 
 void deleteFromAVL(AVL *tree, int data)
 {
-    tree->root = delete(tree->root, data);
+    tree->root = deleteNode(tree->root, data);
 }
 
 void printSubTreeInOrder(Node *node)
@@ -273,12 +246,11 @@ void printSubTreePostOrder(Node *node)
     }
 }
 
-
 void printTree(AVL *tree, int mode)
 {
-   printf("[");
-   switch(mode)
-   {
+    printf("[");
+    switch (mode)
+    {
     case 0:
         printSubTreePreOrder(tree->root);
         break;
@@ -291,15 +263,10 @@ void printTree(AVL *tree, int mode)
         printSubTreePostOrder(tree->root);
         break;
 
-    // case 3:
-    //     printSubtreeLevelOrder(tree->root);
-    //     break
-    
     default:
         printSubTreeInOrder(tree->root);
-        break;
-   }
-   printf("]\n");
+    }
+    printf("]\n");
 }
 
 void deleteSubTree(Node *node)
@@ -315,4 +282,5 @@ void deleteSubTree(Node *node)
 void deleteTree(AVL *tree)
 {
     deleteSubTree(tree->root);
+    free(tree);
 }
