@@ -11,7 +11,10 @@ struct node
 };
 typedef struct node TNode;
 
-struct tree;
+struct tree
+{
+    TNode *root;
+};
 typedef struct tree Tree;
 
 // creates and returns a new empty tree

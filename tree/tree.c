@@ -3,11 +3,6 @@
 #include <stdio.h>
 #include <malloc.h>
 
-struct tree
-{
-    TNode *root;
-};
-
 Tree *newTree()
 {
     Tree *tree = malloc(sizeof(Tree));

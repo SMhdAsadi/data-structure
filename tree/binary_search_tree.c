@@ -1,5 +1,5 @@
-#include <malloc.h>
 #include "binary_search_tree.h"
+#include <malloc.h>
 
 void addToBST(Tree *tree, int data)
 {
@@ -10,7 +10,7 @@ void addToBST(Tree *tree, int data)
     }
 
     TNode *currentNode = tree->root;
-    while ((data < currentNode->data && currentNode->left != NULL) || 
+    while ((data < currentNode->data && currentNode->left != NULL) ||
            (data > currentNode->data && currentNode->right != NULL))
     {
         currentNode = data < currentNode->data ? currentNode->left : currentNode->right;
@@ -22,27 +22,21 @@ void addToBST(Tree *tree, int data)
 int hasSubTreeValue(TNode *node, int data)
 {
     if (node == NULL)
-    {
         return 0;
-    }
 
     if (node->data == data)
-    {
         return 1;
-    }
+
     if (node->data < data)
-    {
         return hasSubTreeValue(node->right, data);
-    }
+
     return hasSubTreeValue(node->left, data);
 }
 
 int search(Tree *tree, int data)
 {
     if (isTreeEmpty(tree))
-    {
         return 0;
-    }
 
     return hasSubTreeValue(tree->root, data);
 }
@@ -51,30 +45,31 @@ TNode *getLowestNode(TNode *node)
 {
     TNode *currentNode = node;
     while (currentNode != NULL && currentNode->left != NULL)
-    {
         currentNode = currentNode->left;
-    }
+
     return currentNode;
 }
 
-TNode *deleteNode(TNode *node, int data)
+TNode *deleteNode(TNode *node, int data, int *isDeleted)
 {
-    if (node == NULL) return node;
+    if (node == NULL)
+        return NULL;
 
     // if data is not found yet
     if (data < node->data)
     {
-        node->left = deleteNode(node->left, data);
+        node->left = deleteNode(node->left, data, isDeleted);
         return node;
     }
 
     if (data > node->data)
     {
-        node->right = deleteNode(node->right, data);
+        node->right = deleteNode(node->right, data, isDeleted);
         return node;
     }
 
     // if data is found
+    *isDeleted = 1;
 
     // if node has no children
     if (node->right == NULL && node->left == NULL)
@@ -102,7 +97,7 @@ TNode *deleteNode(TNode *node, int data)
     // if node has both left and right child
     TNode *LowestInRightSubTree = getLowestNode(node->right);
     node->data = LowestInRightSubTree->data;
-    node->right = deleteNode(node->right, node->data);
+    node->right = deleteNode(node->right, node->data, isDeleted);
 
     return node;
 }
@@ -110,10 +105,10 @@ TNode *deleteNode(TNode *node, int data)
 int deleteFromBST(Tree *tree, int data)
 {
     if (isTreeEmpty(tree))
-    {
         return 0;
-    }
 
-    tree->root = deleteNode(tree->root, data);
-    return 1;
+    int isDeleted = 0;
+
+    tree->root = deleteNode(tree->root, data, &isDeleted);
+    return isDeleted;
 }
