@@ -1,7 +1,7 @@
-#ifndef ARRAY_QUEUE_H
-#define ARRAY_QUEUE_H
+#ifndef TREENODE_QUEUE_H
+#define TREENODE_QUEUE_H
 
-#define MAX_QUEUE_SIZE 10
+#include "tree.h"
 
 struct queue;
 typedef struct queue Queue;
@@ -19,22 +19,13 @@ int isQueueFull(Queue *queue);
     puts data in last position of the queue
     returns -1 if queue is full
 */
-int enqueue(Queue *queue, int data);
+int enqueue(Queue *queue, TNode *node);
 
 /*
     returns and deletes first item of queue
-    returns -1 if queue is empty
+    returns NULL if queue is empty
 */
-int dequeue(Queue *queue);
-
-/*
-    returns first item of queue
-    returns -1 if queue is empty
-*/
-int peek(Queue *queue);
-
-// prints queue on the stdout
-void printQueue(Queue *queue);
+TNode *dequeue(Queue *queue);
 
 // deletes queue and frees memory
 void deleteQueue(Queue *queue);

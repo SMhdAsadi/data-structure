@@ -1,7 +1,12 @@
+#include "tree.h"
+#include "treenode_queue.h"
 #include <stdio.h>
 #include <malloc.h>
-#include "tree.h"
-#include "../queue/node_queue.h"
+
+struct tree
+{
+    TNode *root;
+};
 
 Tree *newTree()
 {
@@ -11,12 +16,19 @@ Tree *newTree()
     return tree;
 }
 
+Tree *newTreeWithNode(TNode *root)
+{
+    Tree *tree = malloc(sizeof(Tree));
+    tree->root = root;
+
+    return tree;
+}
+
 TNode *newNode(int data)
 {
     TNode *node = malloc(sizeof(TNode));
     node->data = data;
-    node->left = NULL;
-    node->right = NULL;
+    node->left = node->right = NULL;
 
     return node;
 }
@@ -26,29 +38,32 @@ int isTreeEmpty(Tree *tree)
     return tree->root == NULL;
 }
 
+int getNodeCount(TNode *node)
+{
+    if (node == NULL)
+        return 0;
+
+    return 1 + getNodeCount(node->left) + getNodeCount(node->right);
+}
 
 int addLeft(TNode *node, int data)
 {
-    TNode *new_node = newNode(data);
-    if (node->left == NULL)
-    {
-        node->left = new_node;
-        return 1;
-    }
+    if (node->left != NULL)
+        return 0;
 
-    return 0;
+    TNode *new_node = newNode(data);
+    node->left = new_node;
+    return 1;
 }
 
 int addRight(TNode *node, int data)
 {
-    TNode *new_node = newNode(data);
-    if (node->right == NULL)
-    {
-        node->right = new_node;
-        return 1;
-    }
+    if (node->right != NULL)
+        return 0;
 
-    return 0;
+    TNode *new_node = newNode(data);
+    node->right = new_node;
+    return 1;
 }
 
 void printSubTreeInOrder(TNode *node)
@@ -83,7 +98,7 @@ void printSubTreePostOrder(TNode *node)
 
 void printSubTreeLevelOrder(Tree *tree)
 {
-    Queue *queue = newQueue();
+    Queue *queue = newQueue(getNodeCount(tree->root));
 
     TNode *currentNode = tree->root;
     while (currentNode != NULL)
@@ -108,9 +123,9 @@ void printTree(Tree *tree, int mode)
         mode 2: postorder
         mode 3: level order
     */
-   printf("[");
-   switch(mode)
-   {
+    printf("[");
+    switch (mode)
+    {
     case 0:
         printSubTreePreOrder(tree->root);
         break;
@@ -126,12 +141,12 @@ void printTree(Tree *tree, int mode)
     case 3:
         printSubTreeLevelOrder(tree);
         break;
-    
+
     default:
         printSubTreeInOrder(tree->root);
         break;
-   }
-   printf("]\n");
+    }
+    printf("]\n");
 }
 
 void deleteSubTree(TNode *node)
@@ -147,9 +162,8 @@ void deleteSubTree(TNode *node)
 int deleteLeft(TNode *node)
 {
     if (node->left == NULL)
-    {
         return 0;
-    }
+
     TNode *leftSubTree = node->left;
     node->left = NULL;
 
@@ -160,9 +174,8 @@ int deleteLeft(TNode *node)
 int deleteRight(TNode *node)
 {
     if (node->right == NULL)
-    {
         return 0;
-    }
+
     TNode *rightSubTree = node->right;
     node->right = NULL;
 
@@ -179,49 +192,33 @@ void deleteTree(Tree *tree)
 int getHeight(TNode *node)
 {
     if (node == NULL)
-    {
         return 0;
-    }
 
     if (node->left == NULL && node->right == NULL)
-    {
         return 1;
-    }
 
     return max(1 + getHeight(node->left), 1 + getHeight(node->right));
 }
 
-int getNodeCount(TNode *node)
-{
-    if (node == NULL)
-    {
-        return 0;
-    }
-    return 1 + getNodeCount(node->left) + getNodeCount(node->right);
-}
-
 int isFullSubTree(TNode *node)
 {
-    if (node == NULL) return 1;
-    if (node->left == NULL && node->right == NULL) return 1;
+    if (node == NULL)
+        return 1;
+    if (node->left == NULL && node->right == NULL)
+        return 1;
     if (node->left != NULL && node->right != NULL)
-    {
         return isFullSubTree(node->left) && isFullSubTree(node->right);
-    }
+
     return 0;
 }
 
 int isCompleteSubTree(TNode *node, int treeNodeCount, int index)
 {
     if (node == NULL)
-    {
         return 1;
-    }
 
     if (index > treeNodeCount - 1)
-    {
         return 0;
-    }
 
     return isCompleteSubTree(node->left, treeNodeCount, 2 * index + 1) &&
            isCompleteSubTree(node->right, treeNodeCount, 2 * index + 2);
@@ -230,21 +227,15 @@ int isCompleteSubTree(TNode *node, int treeNodeCount, int index)
 int isPerfectSubTree(TNode *node, int treeDepth, int currentLevel)
 {
     if (node == NULL)
-    {
         return 1;
-    }
 
     // if it is a leaf on the last level
     if (node->left == NULL && node->right == NULL && treeDepth == currentLevel)
-    {
         return 1;
-    }
 
     if (node->left != NULL && node->right != NULL)
-    {
-        return isPerfectSubTree(node->left, treeDepth, currentLevel + 1) && 
+        return isPerfectSubTree(node->left, treeDepth, currentLevel + 1) &&
                isPerfectSubTree(node->right, treeDepth, currentLevel + 1);
-    }
 
     // if this is a leaf not on the last row or has one child
     return 0;
@@ -253,9 +244,7 @@ int isPerfectSubTree(TNode *node, int treeDepth, int currentLevel)
 int isBalancedSubTree(TNode *node)
 {
     if (node == NULL)
-    {
         return 1;
-    }
 
     int differenceInHeight = getHeight(node->left) - getHeight(node->right);
     return differenceInHeight < 2 && differenceInHeight > -2;
